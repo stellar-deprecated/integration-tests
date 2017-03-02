@@ -6,11 +6,14 @@
 # Unfortunately it's not possible to set it in .travis.yml.
 sudo: required
 services:
-  - docker
+- docker
 language: node_js
 node_js: 6.9
 env:
-  - FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=master 
-  - FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=v0.0.17
-  - FI1_BRIDGE_VERSION=v0.0.17 FI2_BRIDGE_VERSION=v0.0.17
-script: ./script.sh
+- FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=master
+- FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=v0.0.17
+- FI1_BRIDGE_VERSION=v0.0.17 FI2_BRIDGE_VERSION=v0.0.17
+script: "./script.sh"
+notifications:
+  slack:
+    secure: Rg8OnRQ+RO/NHWsSK6gyGKNXGlAAHFJwLotui4dvztPMUhFm9SrLEmiAJyOGlvPEYmR1kZZVMXfLsU2PNi5zwhipAQzlo0AB+guu+FlRwWBT2ti/+2H8VmkXOpCmpXcKz2KS26efo2Kc2dVwidLcHFCTNsHeT171eJOd+Qt8or6Hm629AdZNJvfzDUdtHXbRmKuDD2NvHu9b/jt3dtWWStRW7qsxGSEObzxoWl7pljkcFKyDGK9XW1cOG2ag0HMEqY/jIChqfFLS0Kp0LzbxA8yfynKfXBbBK7RTM824txd3QO5Fw9WqfQa6d1ZdTZTbgFHchH8juUW2g2AX4hhnd3oeQL1XA7dtBL0HcDut9maJzMih+X5/LG42pZHzTif7JGCFVzugiboMp/4B3CImsr5gpbLqwmh9UrswEpVKQtHSYQf8kBlaRclbBfhbxJXC1gEffPuBWwVyATWIxjCPBu8QzrukEkizD3RiXPpGXBsg/U0lqiwQhyo0Wp1G4/bD3XW7riAmd9s+J7G1FeZlSibSLj+8kcNE6hXmpBurVumVwEARB3lJtQcIfGMU0EhK5V5YDw+uRvuIgK+qYwPlansp1OtIhGdauO4X3p7Uc7iMwpA4WGHAGXKxfPA0940qL0ruclXfj1cg0hG2oI6mCrABXYhXPBiF7/+9Gx+ilp4=
