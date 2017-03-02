@@ -1,0 +1,15 @@
+# Remember to limit concurrent build in Travis settings to:
+#
+# [Number of available tunnels] / [Tunnels used in each test run, currently: 2]
+#
+# because ngrok limits the number of concurrent tunels.
+# Unfortunately it's not possible to set it in .travis.yml.
+sudo: required
+services:
+  - docker
+language: node_js
+env:
+  - FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=master 
+  #- FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=v0.0.17
+  #- FI1_BRIDGE_VERSION=v0.0.17 FI2_BRIDGE_VERSION=v0.0.17
+script: script.sh

@@ -1,0 +1,14 @@
+{
+  "name": "fi-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "dependencies": {
+    "axios": "^0.15.3",
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "express-http-proxy": "^0.11.0",
+    "morgan": "^1.8.1"
+  }
+}

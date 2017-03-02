@@ -1,0 +1,43 @@
+version: '2'
+services:
+  fi1:
+    image: container
+    env_file: ./container1.env
+    environment:
+    - FI_DOMAIN=${FI1_DOMAIN}
+    - OTHER_FI_DOMAIN=${FI2_DOMAIN}
+    - BRIDGE_VERSION=${FI1_BRIDGE_VERSION}
+    - RECEIVING_SEED=${FI1_RECEIVING_SEED}
+    - SIGNING_SEED=${FI1_SIGNING_SEED}
+    ports:
+    - "8000:8003"
+    networks:
+    - fi1
+  fi2:
+    image: container
+    env_file: ./container2.env
+    environment:
+    - FI_DOMAIN=${FI2_DOMAIN}
+    - OTHER_FI_DOMAIN=${FI1_DOMAIN}
+    - BRIDGE_VERSION=${FI2_BRIDGE_VERSION}
+    - RECEIVING_SEED=${FI2_RECEIVING_SEED}
+    - SIGNING_SEED=${FI2_SIGNING_SEED}
+    ports:
+    - "9000:8003"
+    networks:
+    - fi2
+  postgres1:
+    image: "postgres:9.6.1"
+    networks:
+      fi1:
+        aliases:
+          - db
+  postgres2:
+    image: "postgres:9.6.1"
+    networks:
+      fi2:
+        aliases:
+          - db
+networks:
+  fi1:
+  fi2:

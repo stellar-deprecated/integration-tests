@@ -1,0 +1,6 @@
+/accounts.txt
+/node_modules
+/container/node_modules
+/compose_up_debug.sh
+/ngrok.yml
+/ngrok.log
