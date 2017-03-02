@@ -46,15 +46,15 @@ function checkStatus() {
       }
     }
 
-    console.log("Pending tests: "+pending);
+    log("Pending tests: "+pending);
 
     if (allFinished) {
       if (allSuccess) {
-        console.log("All tests pass!");
+        log("All tests pass!");
         process.exit();
       } else {
-        console.log("Tests failed!");
-        console.log(JSON.stringify(fis, null, 4));
+        log("Tests failed!");
+        log(JSON.stringify(fis, null, 4));
         process.exit(1);
       }
     }
@@ -62,8 +62,8 @@ function checkStatus() {
     if (!startedTimeout) {
       startedTimeout = true
       setTimeout(function() {
-        console.error("Tests timed out!");
-        console.log(JSON.stringify(fis, null, 4));
+        log("Tests timed out!");
+        log(JSON.stringify(fis, null, 4));
         process.exit(2);
       }, 60*1000);
     }
@@ -81,9 +81,16 @@ function getTestsStatus(fi) {
       fi.tests = response.data;
     })
     .catch(function (response) {
-      console.error("Monitor: Error connecting to FI");
+      log("Monitor: Waiting for FIs to go online.");
       if (response.headers) {
-        console.error("Error: "+response.headers.status);
+        log("Error: "+response.headers.status);
       }
     });
+}
+
+function log(msg) {
+  if (typeof msg === 'object') {
+    msg = JSON.stringify(msg);
+  }
+  console.log("monitor      | "+msg)
 }

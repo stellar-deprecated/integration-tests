@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/stellar/integration-tests.svg?branch=master)](https://travis-ci.org/stellar/integration-tests)
+
+# Stellar Integration Tests
 
 ## FI 1
 
