@@ -5,17 +5,17 @@
 var axios = require('axios');
 var fis = [
   {
-    url: "http://localhost:8000/tests",
+    url: "http://192.168.99.100:8000/tests",
     online: false,
     tests: null
   },
   {
-    url: "http://localhost:9000/tests",
+    url: "http://192.168.99.100:9000/tests",
     online: false,
     tests: null
   }
 ];
-var startedTimeout = false;
+var started = false;
 
 function checkStatus() {
   getTestsStatus(fis[0]);
@@ -59,8 +59,12 @@ function checkStatus() {
       }
     }
 
-    if (!startedTimeout) {
-      startedTimeout = true
+    if (!started) {
+      started = true;
+      // Trigger tests
+      axios.post(fis[0].url);
+      axios.post(fis[1].url);
+      // Timeout
       setTimeout(function() {
         log("Tests timed out!");
         log(JSON.stringify(fis, null, 4));

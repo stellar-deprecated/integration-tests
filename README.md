@@ -31,5 +31,6 @@ Receiving | GCNP7JE6KR5CKHMVVFTZJUSP7ALAXWP62SK6IMIY4IF3JCHEZKBJKDZF
 Signing | GD4SMSFNFASBHPMCOJAOVYH47OXQM5BGSHFLKHO5BGRGUK6ZOAVDG54B
 
 # TODO
-- Use local horizon, stellar-core instead of SDF's instances.
-- Test `mysql` storage for bridge and compliance.
+
+* Test `mysql` storage for bridge and compliance.
+* Use `docker-stellar-core-horizon` instead of SDF's instances.

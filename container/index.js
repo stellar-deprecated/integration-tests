@@ -90,6 +90,13 @@ app.get('/tests', function (req, res) {
   res.send(tests);
 });
 
+// Endpoint to trigger tests called by monitoring app when
+// both FIs are online.
+app.post('/tests', function (req, res) {
+  sendPayment();
+  res.send("OK");
+});
+
 app.listen(process.env.FI_PORT, function () {
   console.log('Server listening!')
 });
@@ -117,8 +124,6 @@ function sendPayment() {
       tests.send.status = "fail";
     });
 }
-
-setTimeout(sendPayment, 5000);
 
 function assertReceiveTest(body) {
   if (body.from == process.env.RECEIVING_ACCOUNT) {
