@@ -5,12 +5,12 @@
 var axios = require('axios');
 var fis = [
   {
-    url: "http://192.168.99.100:8000/tests",
+    url: "http://localhost:8000/tests",
     online: false,
     tests: null
   },
   {
-    url: "http://192.168.99.100:9000/tests",
+    url: "http://localhost:9000/tests",
     online: false,
     tests: null
   }
