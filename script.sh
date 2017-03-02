@@ -4,7 +4,7 @@ docker build ./container -t container
 # TODO cache the image
 
 # download ngrok
-wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+wget -nv https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 unzip ngrok-stable-linux-amd64.zip
 
 # start ngrok

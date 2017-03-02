@@ -5,8 +5,8 @@ apt-get install -y git gcc postgresql openssl
 
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
 
-wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
-tar xvf go1.8.linux-amd64.tar.gz
+wget -nv https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
+tar xf go1.8.linux-amd64.tar.gz
 mv go /usr/local
 
 mkdir /.gopath

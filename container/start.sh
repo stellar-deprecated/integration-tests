@@ -22,8 +22,8 @@ function download_bridge() {
     mv bin/* ..
     cd ..
   else
-    wget https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    wget https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
+    wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
+    wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
     tar -xvzf bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
     tar -xvzf compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
     # Move binaries to home dir
