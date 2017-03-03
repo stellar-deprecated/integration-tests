@@ -1,7 +1,7 @@
 set -e
 
 apt-get update
-apt-get install -y git gcc postgresql openssl
+apt-get install -y git gcc postgresql openssl mysql-client
 
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
 

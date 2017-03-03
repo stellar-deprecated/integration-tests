@@ -1,7 +1,7 @@
 // Monitor connects to FI servers in docker images and check the state of tests.
 // * If all tests are passing it exits with `0` code.
-// * If there is a failure it exists with `1` error code.
-// * If tests haven't finished in a defined timeout, it exists with `2` error code.
+// * If there is a failure it exits with `1` error code.
+// * If tests haven't finished in a defined timeout, it exits with `2` error code.
 var axios = require('axios');
 var fis = [
   {

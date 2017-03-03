@@ -35,6 +35,14 @@ function download_bridge() {
 }
 
 function config_bridge() {
+  sed -i "s/{DATABASE_TYPE}/${DATABASE_TYPE}/g" bridge.cfg
+  if [ "$DATABASE_TYPE" == "postgres" ]
+  then
+    export DATABASE_URL=postgres://postgres@db/bridge?sslmode=disable
+  else
+    export DATABASE_URL=root:root@tcp\(db:3306\)/bridge
+  fi
+  sed -i "s#{DATABASE_URL}#${DATABASE_URL}#g" bridge.cfg
   sed -i "s/{BRIDGE_PORT}/${BRIDGE_PORT}/g" bridge.cfg
   sed -i "s/{ISSUING_ACCOUNT}/${ISSUING_ACCOUNT}/g" bridge.cfg
   sed -i "s/{RECEIVING_ACCOUNT}/${RECEIVING_ACCOUNT}/g" bridge.cfg
@@ -42,6 +50,14 @@ function config_bridge() {
   sed -i "s/{COMPLIANCE_INTERNAL_PORT}/${COMPLIANCE_INTERNAL_PORT}/g" bridge.cfg
   sed -i "s/{FI_PORT}/${FI_PORT}/g" bridge.cfg
 
+  sed -i "s/{DATABASE_TYPE}/${DATABASE_TYPE}/g" compliance.cfg
+  if [ "$DATABASE_TYPE" == "postgres" ]
+  then
+    export DATABASE_URL=postgres://postgres@db/compliance?sslmode=disable
+  else
+    export DATABASE_URL=root:root@tcp\(db:3306\)/compliance
+  fi
+  sed -i "s#{DATABASE_URL}#${DATABASE_URL}#g" compliance.cfg
   sed -i "s/{COMPLIANCE_EXTERNAL_PORT}/${COMPLIANCE_EXTERNAL_PORT}/g" compliance.cfg
   sed -i "s/{COMPLIANCE_INTERNAL_PORT}/${COMPLIANCE_INTERNAL_PORT}/g" compliance.cfg
   sed -i "s/{SIGNING_SEED}/${SIGNING_SEED}/g" compliance.cfg
@@ -57,10 +73,13 @@ function init_bridge_dbs() {
 
     psql -h db -c 'create database bridge;' -U postgres
     psql -h db -c 'create database compliance;' -U postgres
-  else 
-    # TODO
-    echo "create database bridge" | mysql -u root
-    echo "create database compliance" | mysql -u root
+  else
+    # Drop databases when starting existing machine
+    echo "drop database if exists bridge" | mysql -h db -u root -proot
+    echo "drop database if exists compliance" | mysql -h db -u root -proot
+
+    echo "create database bridge" | mysql -h db -u root -proot
+    echo "create database compliance" | mysql -h db -u root -proot
   fi
 
   ./bridge --migrate-db
@@ -73,8 +92,8 @@ function init_fi_server() {
 
 function start() {
   node index.js &
-  ./bridge &
-  ./compliance
+  ./bridge -c bridge.cfg &
+  ./compliance -c compliance.cfg
 }
 
 if [ ! -f _created ]
