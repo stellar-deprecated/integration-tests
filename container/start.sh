@@ -67,6 +67,12 @@ function config_bridge() {
 function init_bridge_dbs() {
   if [ "$DATABASE_TYPE" == "postgres" ]
   then
+    # Wait for postgres to start
+    until psql -h db -U postgres -c '\l'; do
+      echo "Waiting for postgres..."
+      sleep 5
+    done
+
     # Drop databases when starting existing machine
     psql -h db -c 'drop database bridge;' -U postgres || true
     psql -h db -c 'drop database compliance;' -U postgres || true
@@ -74,6 +80,12 @@ function init_bridge_dbs() {
     psql -h db -c 'create database bridge;' -U postgres
     psql -h db -c 'create database compliance;' -U postgres
   else
+    # Wait for mysql to start
+    until mysqladmin ping -h db -u root -proot --silent; do
+      echo "Waiting for mysql..."
+      sleep 5
+    done
+
     # Drop databases when starting existing machine
     echo "drop database if exists bridge" | mysql -h db -u root -proot
     echo "drop database if exists compliance" | mysql -h db -u root -proot
