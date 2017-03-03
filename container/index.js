@@ -110,7 +110,7 @@ function sendPayment() {
     sender: "sender*"+process.env.FI_DOMAIN,
     destination: "user1*"+process.env.OTHER_FI_DOMAIN,
     amount: 1,
-    asset_code: "PHP",
+    asset_code: "TEST",
     asset_issuer: process.env.ISSUING_ACCOUNT
   });
   axios.post("http://localhost:"+process.env.BRIDGE_PORT+"/payment", query)
@@ -138,7 +138,7 @@ function assertReceiveTest(body) {
     return failTest("receive", "Invalid amount: "+body.amount);
   }
 
-  if (body.asset_code !== "PHP") {
+  if (body.asset_code !== "TEST") {
     return failTest("receive", "Invalid asset_code: "+body.asset_code);
   }
 

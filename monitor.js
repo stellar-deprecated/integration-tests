@@ -74,7 +74,7 @@ function checkStatus() {
   }
 }
 
-// Check status every second
+// Check status every few seconds
 setInterval(checkStatus, 5000);
 
 // Helper functions
