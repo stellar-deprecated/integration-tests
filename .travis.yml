@@ -10,9 +10,15 @@ services:
 language: node_js
 node_js: 6.9
 env:
+# master with master
 - FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=master
+# master with recent releases
 - FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=v0.0.18
-- FI1_BRIDGE_VERSION=v0.0.18 FI2_BRIDGE_VERSION=v0.0.18
+- FI1_BRIDGE_VERSION=master FI2_BRIDGE_VERSION=v0.0.19
+# few recent releases with each other
+- FI1_BRIDGE_VERSION=v0.0.18 FI2_BRIDGE_VERSION=v0.0.19
+# latest with latest
+- FI1_BRIDGE_VERSION=v0.0.19 FI2_BRIDGE_VERSION=v0.0.19
 script: "./script.sh"
 notifications:
   slack:
