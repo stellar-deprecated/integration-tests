@@ -93,7 +93,7 @@ app.get('/tests', function (req, res) {
 // Endpoint to trigger tests called by monitoring app when
 // both FIs are online.
 app.post('/tests', function (req, res) {
-  sendPayment();
+  sendPayment(req.body.assetCode);  
   res.send("OK");
 });
 
@@ -101,18 +101,23 @@ app.listen(process.env.FI_PORT, function () {
   console.log('Server listening!')
 });
 
-function sendPayment() {
+function sendPayment(assetCode) {
   // Check if the other FI is online already. If not repeat after 5 seconds.
   console.log("Sending payment to "+process.env.OTHER_FI_DOMAIN+"...")
-  var query = querystring.stringify({
+  var queryParams = {
     // Use compliance protocol
     use_compliance: true,
-    sender: "sender*"+process.env.FI_DOMAIN,
-    destination: "user1*"+process.env.OTHER_FI_DOMAIN,
-    amount: 1,
-    asset_code: "TEST",
-    asset_issuer: process.env.ISSUING_ACCOUNT
-  });
+    sender: "sender*" + process.env.FI_DOMAIN,
+    destination: "user1*" + process.env.OTHER_FI_DOMAIN,
+    amount: 1
+  }
+
+  if (assetCode != "XLM") {
+    queryParams.asset_code = assetCode;
+    queryParams.asset_issuer = process.env.ISSUING_ACCOUNT;
+  }
+
+  var query = querystring.stringify(queryParams);
   axios.post("http://localhost:"+process.env.BRIDGE_PORT+"/payment", query)
     .then(function(response) {
       console.log(response.data);
@@ -138,10 +143,12 @@ function assertReceiveTest(body) {
     return failTest("receive", "Invalid amount: "+body.amount);
   }
 
-  if (body.asset_code !== "TEST") {
-    return failTest("receive", "Invalid asset_code: "+body.asset_code);
+  if (body.asset_code) {
+    if (body.asset_code !== "TEST") {
+      return failTest("receive", "Invalid asset_code: " + body.asset_code);
+    }
   }
-
+  
   let data = JSON.parse(body.data);
 
   if (data.sender !== "sender*"+process.env.OTHER_FI_DOMAIN) {

@@ -62,8 +62,10 @@ function checkStatus() {
     if (!started) {
       started = true;
       // Trigger tests
-      axios.post(fis[0].url);
-      axios.post(fis[1].url);
+      axios.post(fis[0].url, { assetCode: 'XLM' });
+      axios.post(fis[1].url, { assetCode: 'XLM' });
+      axios.post(fis[0].url, {assetCode: 'TEST'});
+      axios.post(fis[1].url, { assetCode: 'TEST' });
       // Timeout
       setTimeout(function() {
         log("Tests timed out!");
