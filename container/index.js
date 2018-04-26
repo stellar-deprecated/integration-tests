@@ -8,7 +8,9 @@ var axios = require('axios');
 
 var tests = {
   send: {status: "pending"},
-  receive: {status: "pending"}
+  sendNative: { status: "pending" },
+  receive: {status: "pending"},
+  receiveNative: { status: "pending" }
 };
 
 app.use(morgan('dev'));
@@ -93,7 +95,10 @@ app.get('/tests', function (req, res) {
 // Endpoint to trigger tests called by monitoring app when
 // both FIs are online.
 app.post('/tests', function (req, res) {
-  sendPayment(req.body.assetCode);  
+  sendPayment("TEST");
+  if (["master", "v0.0.31"].includes(process.env.BRIDGE_VERSION)) {
+    sendPayment("XLM");   
+  }  
   res.send("OK");
 });
 
@@ -110,49 +115,56 @@ function sendPayment(assetCode) {
     sender: "sender*" + process.env.FI_DOMAIN,
     destination: "user1*" + process.env.OTHER_FI_DOMAIN,
     amount: 1
-  }
-
+  };
+  var testName = "sendNative";
+  
   if (assetCode != "XLM") {
     queryParams.asset_code = assetCode;
     queryParams.asset_issuer = process.env.ISSUING_ACCOUNT;
+    testName = "send";
   }
 
   var query = querystring.stringify(queryParams);
   axios.post("http://localhost:"+process.env.BRIDGE_PORT+"/payment", query)
     .then(function(response) {
       console.log(response.data);
-      tests.send.status = "success";
+      passTest(testName);
     })
     .catch(function (response) {
       console.error("Error: "+response.headers.status);
       console.error(response.data);
-      tests.send.status = "fail";
+      failTest(testName, response.data);
     });
 }
 
 function assertReceiveTest(body) {
+  var testName = "receiveNative";
+  if(body.asset_code){
+    testName = "receive";
+  }
+
   if (body.from == process.env.RECEIVING_ACCOUNT) {
-    return failTest("receive", "Received from itself!");
+    return failTest(testName, "Received from itself!");
   }
 
   if (body.route != 1) {
-    return failTest("receive", "Invalid route: "+body.route);
+    return failTest(testName, "Invalid route: "+body.route);
   }
 
   if (body.amount !== "1.0000000") {
-    return failTest("receive", "Invalid amount: "+body.amount);
+    return failTest(testName, "Invalid amount: "+body.amount);
   }
 
   if (body.asset_code) {
     if (body.asset_code !== "TEST") {
-      return failTest("receive", "Invalid asset_code: " + body.asset_code);
+      return failTest(testName, "Invalid asset_code: " + body.asset_code);
     }
   }
   
   let data = JSON.parse(body.data);
 
   if (data.sender !== "sender*"+process.env.OTHER_FI_DOMAIN) {
-    return failTest("receive", "Invalid data.sender: "+data.sender);
+    return failTest(testName, "Invalid data.sender: "+data.sender);
   }
 
   let attachment = JSON.parse(data.attachment);
@@ -171,13 +183,17 @@ function assertReceiveTest(body) {
   };
 
   if (JSON.stringify(attachment.transaction) != JSON.stringify(expectedAttachmentTransaction)) {
-    return failTest("receive", "Invalid attachment.transaction: "+JSON.stringify(attachment.transaction)+" expected: "+JSON.stringify(expectedAttachmentTransaction));
+    return failTest(testName, "Invalid attachment.transaction: "+JSON.stringify(attachment.transaction)+" expected: "+JSON.stringify(expectedAttachmentTransaction));
   }
 
-  tests.receive.status = "success";
+  passTest(testName);
 }
 
 function failTest(testName, error) {
   tests[testName].status = "fail";
   tests[testName].error = error;
+}
+
+function passTest(testName) {
+  tests[testName].status = "success";
 }
