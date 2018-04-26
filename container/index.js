@@ -96,9 +96,15 @@ app.get('/tests', function (req, res) {
 // both FIs are online.
 app.post('/tests', function (req, res) {
   sendPayment("TEST");
-  if (["master", "v0.0.31"].includes(process.env.BRIDGE_VERSION)) {
-    sendPayment("XLM");   
-  }  
+  if (process.env.BRIDGE_VERSION == "master") {
+    sendPayment("XLM");
+  } else {
+    var bridgeVersions = process.env.BRIDGE_VERSION.split(".");
+    bridgeVersions[0] = bridgeVersions[0].slice(1);
+    if (bridgeVersions[2] > 30 || bridgeVersions[1] > 0 || bridgeVersions[0] > 0) {
+      sendPayment("XLM");
+    }
+  }
   res.send("OK");
 });
 
