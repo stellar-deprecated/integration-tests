@@ -58,8 +58,6 @@ Description | Scope | Name | Value
 Ngrok Auth Token | Global | `NGROK_AUTH_TOKEN` | _secret_
 F1 Domain | Global | `FI1_DOMAIN` | _random_
 F2 Domain | Global | `FI2_DOMAIN` | _random_
-F1 Database Type | Docker | `DATABASE_TYPE` | `postgres`
-F2 Database Type | Docker | `DATABASE_TYPE` | `mysql`
 F1 Bridge version | Global | `FI1_BRIDGE_VERSION` | Defined in .travis.yml: `master` - master branch, other values define release version 
 F2 Bridge version | Global | `FI2_BRIDGE_VERSION` | Defined in .travis.yml: `master` - master branch, other values define release version
 FI1 Receiving account | container1.env | `RECEIVING_ACCOUNT` | `GAAJKG3WQKHWZJ5RGVVZMVV6X3XYU7QUH2YVATQ2KBVR2ZJYLG35Z65A`
