@@ -17,6 +17,7 @@ function download_bridge() {
   then
     git clone https://github.com/stellar/bridge-server
     cd bridge-server
+    git log -1
     $GOPATH/bin/gb build
     # Move binaries to home dir
     mv bin/* ..
