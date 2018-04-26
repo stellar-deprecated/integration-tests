@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -o verbose
 
 # load NVM
 export NVM_DIR="$HOME/.nvm"
