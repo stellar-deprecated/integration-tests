@@ -8,9 +8,7 @@ var axios = require('axios');
 
 var tests = {
   send: {status: "pending"},
-  sendNative: { status: "pending" },
-  receive: {status: "pending"},
-  receiveNative: { status: "pending" }
+  receive: {status: "pending"}
 };
 
 app.use(morgan('dev'));
@@ -97,6 +95,8 @@ app.get('/tests', function (req, res) {
 app.post('/tests', function (req, res) {
   sendPayment("TEST");
   if (doNativeTest(process.env.BRIDGE_VERSION) && doNativeTest(process.env.OTHER_FI_BRIDGE_VERSION)) {
+    tests.sendNative = { status: "pending" };
+    tests.receiveNative = { status: "pending" };
     sendPayment("XLM");
   }
   res.send("OK");
