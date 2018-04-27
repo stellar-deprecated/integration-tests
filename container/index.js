@@ -96,14 +96,8 @@ app.get('/tests', function (req, res) {
 // both FIs are online.
 app.post('/tests', function (req, res) {
   sendPayment("TEST");
-  if (process.env.BRIDGE_VERSION == "master") {
+  if (doNativeTest(process.env.BRIDGE_VERSION) && doNativeTest(process.env.OTHER_FI_BRIDGE_VERSION)) {
     sendPayment("XLM");
-  } else {
-    var bridgeVersions = process.env.BRIDGE_VERSION.split(".");
-    bridgeVersions[0] = bridgeVersions[0].slice(1);
-    if (bridgeVersions[2] > 30 || bridgeVersions[1] > 0 || bridgeVersions[0] > 0) {
-      sendPayment("XLM");
-    }
   }
   res.send("OK");
 });
@@ -202,4 +196,16 @@ function failTest(testName, error) {
 
 function passTest(testName) {
   tests[testName].status = "success";
+}
+
+function doNativeTest(bridgeVersion){
+  if (bridgeVersion == "master") {
+    return true;
+  }
+  var bridgeVersions = bridgeVersion.split(".");
+  bridgeVersions[0] = bridgeVersions[0].slice(1);
+  if (bridgeVersions[2] > 30 || bridgeVersions[1] > 0 || bridgeVersions[0] > 0) {
+    return true;
+  }
+  return false;
 }
