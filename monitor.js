@@ -3,6 +3,7 @@
 // * If there is a failure it exits with `1` error code.
 // * If tests haven't finished in a defined timeout, it exits with `2` error code.
 var axios = require('axios');
+var querystring = require('querystring');
 var fis = [
   {
     url: "http://localhost:8000/tests",
