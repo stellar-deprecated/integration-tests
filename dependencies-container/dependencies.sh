@@ -10,4 +10,12 @@ tar xf go1.8.linux-amd64.tar.gz
 mv go /usr/local
 
 mkdir -p /.gopath/bin
+mkdir -p /.gopath/src
 curl https://glide.sh/get | sh
+
+# build glide cache so final container starts faster
+git clone https://github.com/stellar/go go-temp
+cd go-temp
+glide install
+cd -
+rm -rf go-temp

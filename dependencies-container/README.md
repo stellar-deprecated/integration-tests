@@ -1,0 +1,1 @@
+This image is available on Docker Hub as: [`stellar/integration-tests-dependencies`](https://hub.docker.com/r/stellar/integration-tests-dependencies/). It contains dependencies for `/container` so it installs system packages and glide dependencies tests so runs faster.
