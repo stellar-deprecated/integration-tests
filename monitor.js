@@ -30,13 +30,13 @@ function checkStatus() {
 
     for (var i = 0; i < fis.length; i++) {
       var fi = fis[i];
-      if (fi.tests) {
+      if (fi.tests && Object.keys(fi.tests).length > 0) {
         for (var testName in fi.tests) {
-          var test = fi.tests[testName];
-          if (test.status == "fail") {
+          var status = fi.tests[testName];
+          if (status == "fail") {
             allSuccess = false;
           }
-          if (test.status == "pending") {
+          if (status == "pending") {
             allFinished = false;
             pending++;
           }
@@ -97,5 +97,5 @@ function log(msg) {
   if (typeof msg === 'object') {
     msg = JSON.stringify(msg);
   }
-  console.log("monitor      | "+msg)
+  console.log("monitor     | "+msg)
 }

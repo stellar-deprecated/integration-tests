@@ -11,6 +11,7 @@ RUN ["chmod", "+x", "dependencies.sh"]
 RUN /dependencies.sh
 
 ADD start.sh dependencies.sh bridge.cfg compliance.cfg index.js package.json /
+ADD tests /tests
 RUN ["chmod", "+x", "start.sh"]
 
 ENTRYPOINT ./start.sh
