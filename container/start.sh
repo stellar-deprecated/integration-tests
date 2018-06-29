@@ -19,7 +19,7 @@ function download_bridge() {
     mkdir -p $MONOREPO
     git clone https://github.com/stellar/go $MONOREPO
     cd $MONOREPO
-    git checkout bridge-compliance
+    git checkout compliance-pending-response
     glide install
     go build -v ./services/bridge
     go build -v ./services/compliance

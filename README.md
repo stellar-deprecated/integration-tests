@@ -43,8 +43,6 @@ compliance external | 8001 | No
 compliance internal | 8002 | No
 FI server with proxy to `compliance` auth server | 8003 | **Yes**
 
-FI Container is built `FROM stellar/integration-tests-dependencies:latest` (source in `/dependencies-container`) which installs system dependencies and caches glide dependencies so FI Container runs much faster.
-
 #### DB Container
 
 Docker container with a DB server that provides storage for `bridge` and `compliance` servers.
