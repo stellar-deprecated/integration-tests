@@ -15,12 +15,16 @@ export FI_PORT=8003
 function download_bridge() {
   if [ "$BRIDGE_VERSION" == "master" ]
   then
-    git clone https://github.com/stellar/bridge-server
-    cd bridge-server
-    $GOPATH/bin/gb build
+    export MONOREPO=$GOPATH/src/github.com/stellar/go
+    mkdir -p $MONOREPO
+    git clone https://github.com/stellar/go $MONOREPO
+    cd $MONOREPO
+    glide install
+    go build -v ./services/bridge
+    go build -v ./services/compliance
+    cd -
     # Move binaries to home dir
-    mv bin/* ..
-    cd ..
+    mv $MONOREPO/bridge $MONOREPO/compliance .
   else
     wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
     wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
@@ -35,13 +39,7 @@ function download_bridge() {
 }
 
 function config_bridge() {
-  sed -i "s/{DATABASE_TYPE}/${DATABASE_TYPE}/g" bridge.cfg
-  if [ "$DATABASE_TYPE" == "postgres" ]
-  then
-    export DATABASE_URL=postgres://postgres@db/bridge?sslmode=disable
-  else
-    export DATABASE_URL=root:root@tcp\(db:3306\)/bridge
-  fi
+  export DATABASE_URL=postgres://postgres@db/bridge?sslmode=disable
   sed -i "s#{DATABASE_URL}#${DATABASE_URL}#g" bridge.cfg
   sed -i "s/{BRIDGE_PORT}/${BRIDGE_PORT}/g" bridge.cfg
   sed -i "s/{ISSUING_ACCOUNT}/${ISSUING_ACCOUNT}/g" bridge.cfg
@@ -50,13 +48,7 @@ function config_bridge() {
   sed -i "s/{COMPLIANCE_INTERNAL_PORT}/${COMPLIANCE_INTERNAL_PORT}/g" bridge.cfg
   sed -i "s/{FI_PORT}/${FI_PORT}/g" bridge.cfg
 
-  sed -i "s/{DATABASE_TYPE}/${DATABASE_TYPE}/g" compliance.cfg
-  if [ "$DATABASE_TYPE" == "postgres" ]
-  then
-    export DATABASE_URL=postgres://postgres@db/compliance?sslmode=disable
-  else
-    export DATABASE_URL=root:root@tcp\(db:3306\)/compliance
-  fi
+  export DATABASE_URL=postgres://postgres@db/compliance?sslmode=disable
   sed -i "s#{DATABASE_URL}#${DATABASE_URL}#g" compliance.cfg
   sed -i "s/{COMPLIANCE_EXTERNAL_PORT}/${COMPLIANCE_EXTERNAL_PORT}/g" compliance.cfg
   sed -i "s/{COMPLIANCE_INTERNAL_PORT}/${COMPLIANCE_INTERNAL_PORT}/g" compliance.cfg
@@ -65,34 +57,18 @@ function config_bridge() {
 }
 
 function init_bridge_dbs() {
-  if [ "$DATABASE_TYPE" == "postgres" ]
-  then
-    # Wait for postgres to start
-    until psql -h db -U postgres -c '\l'; do
-      echo "Waiting for postgres..."
-      sleep 5
-    done
+  # Wait for postgres to start
+  until psql -h db -U postgres -c '\l'; do
+    echo "Waiting for postgres..."
+    sleep 5
+  done
 
-    # Drop databases when starting existing machine
-    psql -h db -c 'drop database bridge;' -U postgres || true
-    psql -h db -c 'drop database compliance;' -U postgres || true
+  # Drop databases when starting existing machine
+  psql -h db -c 'drop database bridge;' -U postgres || true
+  psql -h db -c 'drop database compliance;' -U postgres || true
 
-    psql -h db -c 'create database bridge;' -U postgres
-    psql -h db -c 'create database compliance;' -U postgres
-  else
-    # Wait for mysql to start
-    until mysqladmin ping -h db -u root -proot --silent; do
-      echo "Waiting for mysql..."
-      sleep 5
-    done
-
-    # Drop databases when starting existing machine
-    echo "drop database if exists bridge" | mysql -h db -u root -proot
-    echo "drop database if exists compliance" | mysql -h db -u root -proot
-
-    echo "create database bridge" | mysql -h db -u root -proot
-    echo "create database compliance" | mysql -h db -u root -proot
-  fi
+  psql -h db -c 'create database bridge;' -U postgres
+  psql -h db -c 'create database compliance;' -U postgres
 
   ./bridge --migrate-db
   ./compliance --migrate-db

@@ -28,16 +28,14 @@ services:
     - "9000:8003"
     networks:
     - fi2
-  postgres:
+  postgres1:
     image: "postgres:9.6.1"
     networks:
       fi1:
         aliases:
           - db
-  mysql:
-    image: "mysql:5.7"
-    environment:
-    - MYSQL_ROOT_PASSWORD=root
+  postgres2:
+    image: "postgres:9.6.1"
     networks:
       fi2:
         aliases:
