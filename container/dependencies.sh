@@ -11,4 +11,4 @@ mv go /usr/local
 
 mkdir -p /.gopath/bin
 mkdir -p /.gopath/src
-curl https://glide.sh/get | sh
+curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
