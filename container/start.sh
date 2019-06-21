@@ -31,9 +31,9 @@ function download_bridge() {
     mkdir -p $MONOREPO
     git clone https://github.com/stellar/go $MONOREPO
     cd $MONOREPO
-    dep ensure -v
     git checkout release-bridge-v0.0.32
     git pull
+    dep ensure -v
     go build -v ./services/bridge
     cd -
     # Move binaries to home dir
@@ -43,6 +43,7 @@ function download_bridge() {
     cd $MONOREPO
     git checkout release-compliance-v0.0.32
     git pull
+    dep ensure -v
     go build -v ./services/compliance
     cd -
     # Move binaries to home dir
