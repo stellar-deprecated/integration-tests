@@ -27,14 +27,35 @@ function download_bridge() {
     mv $MONOREPO/bridge $MONOREPO/compliance .
   elif [[ "$BRIDGE_VERSION" == *"rc"* ]]
   then
-    # test release candidates
-    wget  -nv https://github.com/stellar/go/releases/download/bridge-$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    wget  -nv https://github.com/stellar/go/releases/download/compliance-$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
-    tar -xvzf bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    tar -xvzf compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
+    export MONOREPO=$GOPATH/src/github.com/stellar/go
+    mkdir -p $MONOREPO
+    git clone https://github.com/stellar/go $MONOREPO
+    cd $MONOREPO
+    dep ensure -v
+    git checkout release-bridge-v0.0.32
+    git pull
+    go build -v ./services/bridge
+    cd -
     # Move binaries to home dir
-    mv bridge-$BRIDGE_VERSION-linux-amd64/bridge ./bridge
-    mv compliance-$BRIDGE_VERSION-linux-amd64/compliance ./compliance  
+    mv $MONOREPO/bridge .
+
+    # build compliance
+    cd $MONOREPO
+    git checkout release-compliance-v0.0.32
+    git pull
+    go build -v ./services/compliance
+    cd -
+    # Move binaries to home dir
+    mv $MONOREPO/compliance .
+
+    # # test release candidates
+    # wget  -nv https://github.com/stellar/go/releases/download/bridge-$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
+    # wget  -nv https://github.com/stellar/go/releases/download/compliance-$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
+    # tar -xvzf bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
+    # tar -xvzf compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
+    # # Move binaries to home dir
+    # mv bridge-$BRIDGE_VERSION-linux-amd64/bridge ./bridge
+    # mv compliance-$BRIDGE_VERSION-linux-amd64/compliance ./compliance  
   else
     wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
     wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
