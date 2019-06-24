@@ -27,11 +27,12 @@ function download_bridge() {
     mv $MONOREPO/bridge $MONOREPO/compliance .
   elif [[ "$BRIDGE_VERSION" == *"rc"* ]]
   then
+    export RC_VERSION=`echo "$BRIDGE_VERSION" | cut -d"r" -f 1`
     export MONOREPO=$GOPATH/src/github.com/stellar/go
     mkdir -p $MONOREPO
     git clone https://github.com/stellar/go $MONOREPO
     cd $MONOREPO
-    git checkout release-bridge-v0.0.32
+    git checkout release-bridge-$RC_VERSION
     git pull
     dep ensure -v
     go build -v ./services/bridge
@@ -41,7 +42,7 @@ function download_bridge() {
 
     # build compliance
     cd $MONOREPO
-    git checkout release-compliance-v0.0.32
+    git checkout release-compliance-$RC_VERSION
     git pull
     dep ensure -v
     go build -v ./services/compliance
@@ -49,14 +50,6 @@ function download_bridge() {
     # Move binaries to home dir
     mv $MONOREPO/compliance .
 
-    # # test release candidates
-    # wget  -nv https://github.com/stellar/go/releases/download/bridge-$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    # wget  -nv https://github.com/stellar/go/releases/download/compliance-$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
-    # tar -xvzf bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    # tar -xvzf compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
-    # # Move binaries to home dir
-    # mv bridge-$BRIDGE_VERSION-linux-amd64/bridge ./bridge
-    # mv compliance-$BRIDGE_VERSION-linux-amd64/compliance ./compliance  
   else
     wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
     wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
