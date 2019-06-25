@@ -51,8 +51,21 @@ function download_bridge() {
     mv $MONOREPO/compliance .
 
   else
-    wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
+    export BRIDGE_LINK="https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz"
+    export COMPLIANCE_LINK="https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz"
+
+    MAJOR_VERSION=`echo "$BRIDGE_VERSION" | cut -d"." -f 1`
+    MINOR_VERSION=`echo "$BRIDGE_VERSION" | cut -d"." -f 2`
+    PATCH_VERSION=`echo "$BRIDGE_VERSION" | cut -d"." -f 3`
+
+    # change download link to monorepo if version if higher than v0.0.31
+    if [ "$MAJOR_VERSION" != "v0" ] || [ "$MINOR_VERSION" -gt 0 ] || [ "$PATCH_VERSION" -gt 31 ]; then
+      BRIDGE_LINK="https://github.com/stellar/go/releases/download/bridge-$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz"
+      COMPLIANCE_LINK="https://github.com/stellar/go/releases/download/compliance-$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz"
+    fi
+ 
+    wget  -nv $BRIDGE_LINK
+    wget  -nv $COMPLIANCE_LINK
     tar -xvzf bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
     tar -xvzf compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
     # Move binaries to home dir
