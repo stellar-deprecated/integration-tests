@@ -70,7 +70,7 @@ function checkStatus() {
         log("Tests timed out!");
         log(JSON.stringify(fis, null, 4));
         process.exit(2);
-      }, 60*1000);
+      }, 120*1000);
     }
   }
 }
