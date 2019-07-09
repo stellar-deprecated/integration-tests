@@ -25,9 +25,47 @@ function download_bridge() {
     cd -
     # Move binaries to home dir
     mv $MONOREPO/bridge $MONOREPO/compliance .
+  elif [[ "$BRIDGE_VERSION" == *"rc"* ]]
+  then
+    export RC_VERSION=`echo "$BRIDGE_VERSION" | cut -d"r" -f 1`
+    export MONOREPO=$GOPATH/src/github.com/stellar/go
+    mkdir -p $MONOREPO
+    git clone https://github.com/stellar/go $MONOREPO
+    cd $MONOREPO
+    git checkout release-bridge-$RC_VERSION
+    git pull
+    dep ensure -v
+    go build -v ./services/bridge
+    cd -
+    # Move binaries to home dir
+    mv $MONOREPO/bridge .
+
+    # build compliance
+    cd $MONOREPO
+    git checkout release-compliance-$RC_VERSION
+    git pull
+    dep ensure -v
+    go build -v ./services/compliance
+    cd -
+    # Move binaries to home dir
+    mv $MONOREPO/compliance .
+
   else
-    wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
-    wget  -nv https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
+    export BRIDGE_LINK="https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz"
+    export COMPLIANCE_LINK="https://github.com/stellar/bridge-server/releases/download/$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz"
+
+    MAJOR_VERSION=`echo "$BRIDGE_VERSION" | cut -d"." -f 1`
+    MINOR_VERSION=`echo "$BRIDGE_VERSION" | cut -d"." -f 2`
+    PATCH_VERSION=`echo "$BRIDGE_VERSION" | cut -d"." -f 3`
+
+    # change download link to monorepo if version if higher than v0.0.31
+    if [ "$MAJOR_VERSION" != "v0" ] || [ "$MINOR_VERSION" -gt 0 ] || [ "$PATCH_VERSION" -gt 31 ]; then
+      BRIDGE_LINK="https://github.com/stellar/go/releases/download/bridge-$BRIDGE_VERSION/bridge-$BRIDGE_VERSION-linux-amd64.tar.gz"
+      COMPLIANCE_LINK="https://github.com/stellar/go/releases/download/compliance-$BRIDGE_VERSION/compliance-$BRIDGE_VERSION-linux-amd64.tar.gz"
+    fi
+ 
+    wget  -nv $BRIDGE_LINK
+    wget  -nv $COMPLIANCE_LINK
     tar -xvzf bridge-$BRIDGE_VERSION-linux-amd64.tar.gz
     tar -xvzf compliance-$BRIDGE_VERSION-linux-amd64.tar.gz
     # Move binaries to home dir
