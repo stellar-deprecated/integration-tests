@@ -5,7 +5,7 @@
   "main": "index.js",
   "author": "",
   "dependencies": {
-    "axios": "^0.15.3",
+    "axios": "^0.19.0",
     "babel": "^5.8.20",
     "body-parser": "^1.16.1",
     "express": "^4.14.1",
